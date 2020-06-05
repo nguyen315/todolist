@@ -153,6 +153,11 @@ app.post("/delete", function(req, res) {
   res.redirect("/");
 });
 
-app.listen(8080, function() {
-  console.log("server is running on port 8080");
-})
+let port = process.env.PORT;
+if (port == null || port == "") {
+  port = 3000;
+}
+app.listen(port, function(){
+  console.log("Server start successfully!");
+  
+});
