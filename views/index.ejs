@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8" />
+    <title>Todo List</title>
+
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+      integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+      crossorigin="anonymous"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@300&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+
+  <body>
+      <div class="new-list-form">
+        <form action="/" method="post">
+          <input type="text" name="newList" placeholder="new list" />
+          <button type="submit" name="button" value="list">+</button>
+        </form>
+      </div>
+
+      <% listTitle.forEach(function(list){ %>
+
+      <div class="box">
+
+        <div class="head-box">
+          <h1><%= list.listName %></h1>
+        </div>
+        <ul>
+
+          <% for (let j = 0; j < list.items.length; j++) { %>
+          <li class="item">
+            <form action="/delete" method="post">
+              <input type="checkbox" onChange="this.form.submit()" name="<%= list.listName %>" value="<%= list.items[j] %>">
+              <p><%= list.items[j] %></p>
+            </form>
+          </li>
+          <% } %>
+
+        
+          <form action="/" method="post">
+            <input type="text" name="newItem" placeholder="new item" />
+            <button type="submit" name="button" value="<%= list.listName %>">+</button>
+          </form>
+
+
+        </ul>
+      </div>
+      <% }) %>
+
+
+      <div class="footer">
+        <p>Made with ❤️ by Ho Minh Nguyen</p>
+      </div>
+  </body>
+ 
+</html>
