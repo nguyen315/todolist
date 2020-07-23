@@ -5,7 +5,7 @@ const mongoose = require("mongoose");
 
 const app = new express();
 
-mongoose.connect("mongodb+srv://hmnguyen:gabhmn315@cluster0-shstn.mongodb.net/todolistDB?retryWrites=true&w=majority", {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false});
+mongoose.connect("mongodb://localhost:27017/todolistDB", {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false});
 
 const itemSchema = new mongoose.Schema({
   listName: String,
@@ -13,7 +13,6 @@ const itemSchema = new mongoose.Schema({
 });
 
 const Item = new mongoose.model("Item", itemSchema);
-
 
 app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({
@@ -27,23 +26,17 @@ app.get("/", function(req, res) {
   Item.find({}, function(err, foundItem){
 
     res.render('index', {
-      listTitle: foundItem,
+      lists: foundItem,
     });
   });
 
 });
-
-
-
 
 app.post("/", function(req, res) {
   let typeOfPost = req.body.button;
 
   if (typeOfPost === 'list') {
     let newListName = req.body.newList;
-
-    
-    
 
     let foo = Item.find({}, function(err, foundItem) {
       let alreadyHave = false;
@@ -64,17 +57,6 @@ app.post("/", function(req, res) {
           listName: newListName,
           items: []
         });
-    
-        // Item.insertMany(newList, function(err) {
-
-        //   if (err) {
-        //     console.log(err);
-        //   }
-        //   else {
-        //     console.log("add new list successfully!");
-        //   }
-
-        // });
 
         newList.save( function(err) {
           if (err) 
@@ -87,14 +69,10 @@ app.post("/", function(req, res) {
       else {
         console.log("already have this list");
       }
-
     });
-      
-    
   }
 
   else {
-
     let curListName = typeOfPost;
 
     console.log(curListName);
@@ -130,10 +108,11 @@ app.post("/", function(req, res) {
 app.post("/delete", function(req, res) {
   const item = req.body;
 
+  console.log(item);
   const key = Object.keys(item)[0];
   const value = item[key];
 
-  // console.log(key + " " + value);
+  console.log(key + " " + value);
   
   Item.updateOne(
     {listName: key},
@@ -153,7 +132,9 @@ app.post("/delete", function(req, res) {
   res.redirect("/");
 });
 
-let port = process.env.PORT;
+//let port = process.env.PORT;
+
+let port = 3000;
 if (port == null || port == "") {
   port = 3000;
 }
