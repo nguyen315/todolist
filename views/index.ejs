@@ -18,7 +18,7 @@
   </head>
 
   <body>
-    <div class="container-fluid">
+    <div class="container-fluid clearfix">
       <div class="new-list-form">
         <form action="/" method="post">
           <input type="text" name="newList" placeholder="new list" />
@@ -29,17 +29,20 @@
       <% lists.forEach(function(list){ %>
 
         <div class="box">
-
+          
           <div class="head-box">
+            <form action="/deleteList" method="post">
+              <button type="submit" name="buttonDelete" value="<%= list._id %>"></button>
+            </form>
             <h1><%= list.listName %></h1>
           </div>
           <ul>
 
             <% for (let j = 0; j < list.items.length; j++) { %>
             <li class="item">
-              <form action="/delete" method="POST">
-                <input type="checkbox" onChange="this.form.submit()" name="<%= list.listName %>" value="<%= list.items[j] %>">
-                <p><%= list.items[j] %></p>
+              <form action="/deleteItem" method="POST">
+                <input id="item-delete" type="checkbox" onChange="this.form.submit()" name="<%= list.listName %>" value="<%= list.items[j]._id %>">
+                <label for="item-delete"><%= list.items[j].content %></label>
               </form>
             </li>
             <% } %>
@@ -60,5 +63,4 @@
   <footer>
     <p>Made with ❤️ by Ho Minh Nguyen</p>
   </footer>
- 
 </html>
