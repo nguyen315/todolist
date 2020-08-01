@@ -14,6 +14,7 @@
       href="https://fonts.googleapis.com/css2?family=Manrope:wght@300&display=swap"
       rel="stylesheet"
     />
+    <script src="https://kit.fontawesome.com/819258191a.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="css/styles.css" />
   </head>
 
@@ -32,7 +33,7 @@
           
           <div class="head-box">
             <form action="/deleteList" method="post">
-              <button type="submit" name="buttonDelete" value="<%= list._id %>"></button>
+              <button class="delete-button" type="submit" name="buttonDelete" value="<%= list._id %>"><i class="fas fa-trash"></i></button>
             </form>
             <h1><%= list.listName %></h1>
           </div>
