@@ -1,4 +1,3 @@
-
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
@@ -10,13 +9,19 @@ const app = new express();
 mongoose.connect("mongodb://localhost:27017/todolistDB", {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false});
 
 const itemSchema = new mongoose.Schema({
-  content: String
+  content: {
+    type: String,
+    required: true
+  }
 });
 
 const Item = new mongoose.model("Item", itemSchema);
 
 const listSchema = new mongoose.Schema({
-  listName: String,
+  listName: {
+    type: String,
+    required: true
+  },
   items: [itemSchema]
 });
 
@@ -45,38 +50,34 @@ app.post("/", function(req, res) {
 
   if (typeOfPost === 'list') {
     let newListName = req.body.newList;
-
-    if (newListName.length != 0) {
-      let foo = List.find({}, function(err, foundLists) {
-        let alreadyHave = false;
-        for (let i = 0; i < foundLists.length; i++) {
-          // kiểm tra xem đã tồn tại list đó hay chưa
-          if (foundLists[i].listName == newListName) {
-            alreadyHave = true;
-            break;
-          }
+    
+    let foo = List.find({}, function(err, foundLists) {
+      let alreadyHave = false;
+      for (let i = 0; i < foundLists.length; i++) {
+        // kiểm tra xem đã tồn tại list đó hay chưa
+        if (foundLists[i].listName == newListName) {
+          alreadyHave = true;
+          break;
         }
+      }
 
-        if (!alreadyHave) {
-          const newList = new List ({
-            listName: newListName,
-            items: []
-          });
+      if (!alreadyHave) {
+        const newList = new List ({
+          listName: newListName,
+          items: []
+        });
 
-          newList.save( function(err) {
-            if (err) 
-              console.log(err);
-            else 
-              console.log("add new list successfully");            
-          });
-        }
-        else {
-          console.log("already have this list");
-        }
-
-      });
-    }
-    else console.log('Can not add empty List Title!');
+        newList.save( function(err) {
+          if (err) 
+            console.log(err);
+          else 
+            console.log("add new list successfully");            
+        });
+      }
+      else {
+        console.log("already have this list");
+      }
+    });
   }
 
   else {
@@ -85,18 +86,16 @@ app.post("/", function(req, res) {
     console.log(curListName);
     
     // push item vào list tương ứng
-    let newItem = req.body.newItem;
-    
+    let newItem = req.body.newItem;   
     if (newItem.length > 0) {
-
       newItem = new Item({
         content: newItem
       });
 
-      newItem.save(function(err) {
-        if (err) console.log(err);
-        else console.log("add item successfully!");
-      });
+      // newItem.save(function(err) {
+      //   if (err) console.log(err);
+      //   else console.log("add item successfully!");
+      // });
 
       List.findOneAndUpdate(
 
@@ -111,16 +110,13 @@ app.post("/", function(req, res) {
       );
     }
   }
-
   res.redirect('/');
 });
 
 app.post("/deleteItem", function(req, res) {
   const item = req.body;
-  // console.log(item);
   const key = Object.keys(item)[0];
   const value = item[key];
-  // console.log(key + " " + value);
 
   // pull item ra khỏi items
   List.updateOne(
@@ -138,10 +134,10 @@ app.post("/deleteItem", function(req, res) {
   );
 
   // xóa item
-  Item.deleteOne({_id: value}, function(err) {
-    if (err) console.log(err);
-    else console.log("delete successfully " + value);
-  });
+  // Item.deleteOne({_id: value}, function(err) {
+  //   if (err) console.log(err);
+  //   else console.log("delete successfully " + value);
+  // });
   
   res.redirect("/");
 });
