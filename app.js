@@ -1,20 +1,38 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
-
-
+const session = require("express-session");
+const passport = require("passport");
+const passportLocalMongoose = require("passport-local-mongoose");
 
 const app = new express();
 
+// SET UP
+app.set('view engine', 'ejs');
+app.use(bodyParser.urlencoded({
+  extended: true
+}));
+app.use(express.static('public'));
+app.use(session({
+  secret: "secret message to sign in user",
+  resave: false,
+  saveUninitialized: false
+
+}));
+app.use(passport.initialize());
+app.use(passport.session());
+
+
 mongoose.connect("mongodb://localhost:27017/todolistDB", {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false});
+mongoose.set('useCreateIndex', true)
 
 const itemSchema = new mongoose.Schema({
   content: {
     type: String,
     required: true
-  }
-});
+  },
 
+});
 const Item = new mongoose.model("Item", itemSchema);
 
 const listSchema = new mongoose.Schema({
@@ -24,66 +42,88 @@ const listSchema = new mongoose.Schema({
   },
   items: [itemSchema]
 });
-
 const List = new mongoose.model("List", listSchema);
 
-app.set('view engine', 'ejs');
-app.use(bodyParser.urlencoded({
-  extended: true
-}));
-app.use(express.static('public'));
-
-
-app.get("/", function(req, res) {
-
-  List.find({}, function(err, foundList){
-
-    res.render('index', {
-      lists: foundList,
-    });
-  });
-
+const userSchema = new mongoose.Schema({
+  username: {
+    type: String,
+    unique: true
+  },
+  password: {
+    type: String
+  },
+  lists: [listSchema]
 });
 
+userSchema.plugin(passportLocalMongoose);
+const User = new mongoose.model("User", userSchema);
+passport.use(User.createStrategy()); 
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
+
+
+
+
+// GET 
+app.get("/index", function(req, res) {
+  if (req.isAuthenticated()) {
+    res.render("index", {
+      lists: req.user.lists
+    });
+  }
+  else {
+    res.redirect("/login");
+  }
+});
+
+app.get("/register", function(req, res) {
+  res.render("register");
+});
+
+
+// POST
 app.post("/", function(req, res) {
   let typeOfPost = req.body.button;
 
   if (typeOfPost === 'list') {
     let newListName = req.body.newList;
-    
-    let foo = List.find({}, function(err, foundLists) {
-      let alreadyHave = false;
-      for (let i = 0; i < foundLists.length; i++) {
-        // kiểm tra xem đã tồn tại list đó hay chưa
-        if (foundLists[i].listName == newListName) {
-          alreadyHave = true;
-          break;
-        }
-      }
 
-      if (!alreadyHave) {
-        const newList = new List ({
-          listName: newListName,
-          items: []
-        });
-
-        newList.save( function(err) {
-          if (err) 
-            console.log(err);
-          else 
-            console.log("add new list successfully");            
-        });
-      }
-      else {
-        console.log("already have this list");
+    let lists = req.user.lists;
+    let existedList = false;
+    lists.forEach(function(list) {
+      if (list.listName === newListName) {
+        console.log("already have this list.");
+        existedList = true;
       }
     });
+
+    if (!existedList) {
+      const newList = new List({
+        listName: newListName,
+        items: []
+      });
+      
+      req.user.lists.push(newList);
+      req.user.save(function(err) {
+        if (err) {
+          console.log(err);
+        }
+        else {
+          console.log("save list " + newListName + " success.");
+        }
+      });
+    }
+    else {
+      console.log("list name existed.");
+    }
   }
 
+  // typeOfPost === tên của list 
   else {
-    let curListName = typeOfPost;
+    let listID = typeOfPost;
 
-    console.log(curListName);
+    console.log(listID);
     
     // push item vào list tương ứng
     let newItem = req.body.newItem;   
@@ -92,25 +132,30 @@ app.post("/", function(req, res) {
         content: newItem
       });
 
-      // newItem.save(function(err) {
-      //   if (err) console.log(err);
-      //   else console.log("add item successfully!");
-      // });
-
-      List.findOneAndUpdate(
-
-        {listName: curListName},
-        {$push: {items: newItem}},
-
-        function (error) {
-          if (error) {
-              console.log(error);
-          }
+      let modifyList = req.user.lists.find(list => list._id == listID);
+      modifyList.items.push(newItem);
+      req.user.save(function(err) {
+        if (err) {
+          console.log(err);
         }
-      );
+      });
     }
   }
-  res.redirect('/');
+  res.redirect('/index');
+});
+
+app.post("/register", function(req, res) {
+  User.register({username: req.body.username}, req.body.password, function(err, user){
+    if (err) {
+      console.log(err);
+      res.redirect("/register");
+    }
+    else {
+      passport.authenticate("local")(req, res, function() {
+        res.redirect("/index");
+      });
+    }
+  })
 });
 
 app.post("/deleteItem", function(req, res) {
@@ -118,27 +163,23 @@ app.post("/deleteItem", function(req, res) {
   const key = Object.keys(item)[0];
   const value = item[key];
 
-  // pull item ra khỏi items
   List.updateOne(
     {listName: key},
     {$pull: {items: {_id: value}}},
 
     function (err) {
-      if (err) {
+      if (err) 
         console.log(err);
-      } 
       else {
-        console.log("delete item successfully!");
+        console.log("pull item successfully!");
+
+        Item.deleteOne({_id: value}, function(err) {
+          if (err) console.log(err);
+          else console.log("delete item successfully." + value);
+        });
       }
     }
   );
-
-  // xóa item
-  // Item.deleteOne({_id: value}, function(err) {
-  //   if (err) console.log(err);
-  //   else console.log("delete successfully " + value);
-  // });
-  
   res.redirect("/");
 });
 
@@ -160,6 +201,10 @@ app.post("/deleteList", function(req, res) {
 
   res.redirect("/");
 });
+
+
+
+// RUN
 //let port = process.env.PORT;
 
 let port = 3000;
@@ -167,6 +212,5 @@ if (port == null || port == "") {
   port = 3000;
 }
 app.listen(port, function(){
-  console.log("Server start successfully!");
-  
+  console.log("Server start");
 });
