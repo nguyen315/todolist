@@ -81,6 +81,9 @@ app.get("/register", function(req, res) {
   res.render("register");
 });
 
+app.get("/login", function(req, res) {
+  res.render("login");
+});
 
 // POST
 app.post("/", function(req, res) {
@@ -103,7 +106,7 @@ app.post("/", function(req, res) {
         listName: newListName,
         items: []
       });
-      
+
       req.user.lists.push(newList);
       req.user.save(function(err) {
         if (err) {
@@ -157,6 +160,24 @@ app.post("/register", function(req, res) {
     }
   })
 });
+
+app.post("/login", function(req, res) {
+  const user = new User({
+    username: req.body.username,
+    password: req.body.password
+  });
+
+  req.login(user, function(err){
+    if (err){
+      console.log(err);
+    }
+    else {
+      passport.authenticate("local")(req, res, function() {
+        res.redirect("/index");
+      });
+    }
+  })
+})
 
 app.post("/deleteItem", function(req, res) {
   const item = req.body;
