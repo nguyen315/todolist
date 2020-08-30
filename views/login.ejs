@@ -1,35 +1,28 @@
-<!DOCTYPE html>
-<html lang="en" dir="ltr">
-  <head>
-    <meta charset="utf-8" />
-    <title>Todo List</title>
+<%- include ('partials/header.ejs') %>
 
-    <link
-      rel="stylesheet"
-      href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
-      integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
-      crossorigin="anonymous"
-    />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Manrope:wght@300&display=swap"
-      rel="stylesheet"
-    />
-    <script src="https://kit.fontawesome.com/819258191a.js" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="css/styles.css" />
-  </head>
-
-
-  <body>
-      <div class="login-page">
-        <form action="/login" method="POST">
-          <input type="text" placeholder="username" required/>
-          <input type="password" placeholder="password" required/>
-          <button type="submit">login</button>
-        </form>
+<body>
+<div class="container-login">
+  <div class="login-page center-vertical-horizontal">
+    <span class="login-page-title">
+      Account Login
+    </span>
+    <form class="login-form" action="/login" method="POST">
+      <div class="wrap-login-input">
+        <span class="lnr lnr-user"></span>
+        <input class="login-input" type="text" placeholder="User name" name="username" required />
       </div>
-  </body>
 
-  <footer>
-    <p>Made with ❤️ by Ho Minh Nguyen</p>
-  </footer>
-</html>
+      <div class="wrap-login-input">
+        <span class="lnr lnr-lock"></span>
+        <input class="login-input" type="password" placeholder="Password" name="password" required />
+      </div>
+      
+      <button type="submit">Login</button>
+    </form>
+  </div>
+</div>
+  
+
+</body>
+
+<%- include ('partials/footer.ejs') %>

@@ -58,14 +58,27 @@ const userSchema = new mongoose.Schema({
 userSchema.plugin(passportLocalMongoose);
 const User = new mongoose.model("User", userSchema);
 passport.use(User.createStrategy()); 
-passport.serializeUser(User.serializeUser());
-passport.deserializeUser(User.deserializeUser());
+// used to serialize the user for the session
+passport.serializeUser(function(user, done) {
+  done(null, user.id); 
+ // where is this user.id going? Are we supposed to access this anywhere?
+});
+
+// used to deserialize the user
+passport.deserializeUser(function(id, done) {
+  User.findById(id, function(err, user) {
+      done(err, user);
+  });
+});
 
 
 
 
 
 // GET 
+app.get("/", function(req, res) {
+  res.render("home");
+});
 app.get("/index", function(req, res) {
   if (req.isAuthenticated()) {
     res.render("index", {
@@ -76,11 +89,9 @@ app.get("/index", function(req, res) {
     res.redirect("/login");
   }
 });
-
 app.get("/register", function(req, res) {
   res.render("register");
 });
-
 app.get("/login", function(req, res) {
   res.render("login");
 });
@@ -170,6 +181,7 @@ app.post("/login", function(req, res) {
   req.login(user, function(err){
     if (err){
       console.log(err);
+      res.redirect("/login");
     }
     else {
       passport.authenticate("local")(req, res, function() {

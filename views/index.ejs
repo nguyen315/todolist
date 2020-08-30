@@ -1,29 +1,11 @@
-<!DOCTYPE html>
-<html lang="en" dir="ltr">
-  <head>
-    <meta charset="utf-8" />
-    <title>Todo List</title>
-
-    <link
-      rel="stylesheet"
-      href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
-      integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
-      crossorigin="anonymous"
-    />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Manrope:wght@300&display=swap"
-      rel="stylesheet"
-    />
-    <script src="https://kit.fontawesome.com/819258191a.js" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="css/styles.css" />
-  </head>
+<%- include ('partials/header.ejs') %>
 
   <body>
     <div class="container-fluid clearfix">
       <div class="new-list-form">
         <form action="/" method="post">
           <input type="text" name="newList" placeholder="new list" />
-          <button type="submit" name="button" value="list">+</button>
+          <button type="submit" name="button" value="list" class="add-button">+</button>
         </form>
       </div>
 
@@ -49,9 +31,9 @@
             <% } %>
 
           
-            <form action="/" method="post">
+            <form class="add-item-form" action="/" method="post">
               <input type="text" name="newItem" placeholder="new item" />
-              <button type="submit" name="button" value="<%= list._id %>">+</button>
+              <button type="submit" name="button" value="<%= list._id %>" class="add-button">+</button>
             </form>
 
 
@@ -61,7 +43,4 @@
     </div>
   </body>
 
-  <footer>
-    <p>Made with ❤️ by Ho Minh Nguyen</p>
-  </footer>
-</html>
+<%- include ('partials/footer.ejs') %>
