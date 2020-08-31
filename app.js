@@ -79,6 +79,15 @@ passport.deserializeUser(function(id, done) {
 app.get("/", function(req, res) {
   res.render("home");
 });
+
+app.get("/register", function(req, res) {
+  res.render("register");
+});
+
+app.get("/login", function(req, res) {
+  res.render("login");
+});
+
 app.get("/index", function(req, res) {
   if (req.isAuthenticated()) {
     res.render("index", {
@@ -89,14 +98,44 @@ app.get("/index", function(req, res) {
     res.redirect("/login");
   }
 });
-app.get("/register", function(req, res) {
-  res.render("register");
-});
-app.get("/login", function(req, res) {
-  res.render("login");
-});
+
+
 
 // POST
+
+app.post("/register", function(req, res) {
+  User.register({username: req.body.username}, req.body.password, function(err, user){
+    if (err) {
+      console.log(err);
+      res.redirect("/register");
+    }
+    else {
+      passport.authenticate("local")(req, res, function() {
+        res.redirect("/index");
+      });
+    }
+  })
+});
+
+app.post("/login", function(req, res) {
+  const user = new User({
+    username: req.body.username,
+    password: req.body.password
+  });
+
+  req.login(user, function(err){
+    if (err){
+      console.log(err);
+      res.redirect("/login");
+    }
+    else {
+      passport.authenticate("local")(req, res, function() {
+        res.redirect("/index");
+      });
+    }
+  })
+});
+
 app.post("/", function(req, res) {
   let typeOfPost = req.body.button;
 
@@ -158,82 +197,49 @@ app.post("/", function(req, res) {
   res.redirect('/index');
 });
 
-app.post("/register", function(req, res) {
-  User.register({username: req.body.username}, req.body.password, function(err, user){
-    if (err) {
-      console.log(err);
-      res.redirect("/register");
-    }
-    else {
-      passport.authenticate("local")(req, res, function() {
-        res.redirect("/index");
-      });
-    }
-  })
-});
-
-app.post("/login", function(req, res) {
-  const user = new User({
-    username: req.body.username,
-    password: req.body.password
-  });
-
-  req.login(user, function(err){
-    if (err){
-      console.log(err);
-      res.redirect("/login");
-    }
-    else {
-      passport.authenticate("local")(req, res, function() {
-        res.redirect("/index");
-      });
-    }
-  })
-})
-
-app.post("/deleteItem", function(req, res) {
-  const item = req.body;
-  const key = Object.keys(item)[0];
-  const value = item[key];
-
-  List.updateOne(
-    {listName: key},
-    {$pull: {items: {_id: value}}},
-
-    function (err) {
-      if (err) 
-        console.log(err);
-      else {
-        console.log("pull item successfully!");
-
-        Item.deleteOne({_id: value}, function(err) {
-          if (err) console.log(err);
-          else console.log("delete item successfully." + value);
-        });
-      }
-    }
-  );
-  res.redirect("/");
-});
 
 app.post("/deleteList", function(req, res) {
   const idOfList = req.body.buttonDelete;
 
-  List.findOne({_id: idOfList}, function(err, foundList) {
-    foundList.items.forEach(function(item) {
-      Item.deleteOne({_id: item._id}, function(err){
-        if (err) console.log(err);
-      });
-    });
-  });
-  
-  List.deleteOne({_id: idOfList}, function(err) {
-    if (err) console.log(err);
-    else console.log("delete successful list.");
+  req.user.lists = req.user.lists.filter(function(obj) {
+    return obj._id != idOfList;
   });
 
-  res.redirect("/");
+  req.user.save(function(err) {
+    if (err) {
+      console.log(err);
+    }
+  });
+
+  res.redirect("/index");
 });
+
+app.post("/deleteItem", function(req, res) {
+  const deleteItem = req.body;
+  const listID = Object.keys(deleteItem)[0];
+  const deleteItemID = deleteItem[listID];
+
+  let lists = req.user.lists;
+
+  for (let i = 0; i < lists.length; i++) {
+    if (lists[i]._id == listID) {
+      lists[i].items = lists[i].items.filter(function(obj) {
+        return obj._id != deleteItemID;
+      });
+      break;
+    }
+  }
+
+  req.user.save(function(err) {
+    if (err) {
+      console.log(err);
+    }
+  });
+
+  res.redirect("/index");
+});
+
+
 
 
 

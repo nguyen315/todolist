@@ -24,7 +24,7 @@
             <% for (let j = 0; j < list.items.length; j++) { %>
             <li class="item">
               <form action="/deleteItem" method="POST">
-                <input id="item-delete" type="checkbox" onChange="this.form.submit()" name="<%= list.listName %>" value="<%= list.items[j]._id %>">
+                <input id="item-delete" type="checkbox" onChange="this.form.submit()" name="<%= list._id %>" value="<%= list.items[j]._id %>">
                 <label for="item-delete"><%= list.items[j].content %></label>
               </form>
             </li>
