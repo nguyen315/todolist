@@ -110,6 +110,7 @@ app.post("/register", function(req, res) {
       res.redirect("/register");
     }
     else {
+      console.log("register success");
       passport.authenticate("local")(req, res, function() {
         res.redirect("/index");
       });

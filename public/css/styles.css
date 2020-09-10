@@ -95,7 +95,7 @@ ul {
 }
 
 .add-item-form {
-  border-top: 1px solid #888888;
+  border-top: 1px solid #e6e6e6;
   margin: 20px 0 5px;
   padding-top: 5px;
 }
@@ -196,14 +196,8 @@ input.login-input:focus {
   display: inline-block;
 }
 
-.container-login {
-  background-image: none;
-}
-
 .login-page {
-  
   box-sizing: border-box;
-  
   background-color: transparent;
   text-align: center;
   margin: auto;
