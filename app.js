@@ -24,8 +24,8 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
+mongoose.connect(process.env.MONGODB_URI, {useNewUrlParser: true, useUnifiedTopology: true});
 
-mongoose.connect(process.env.DB_URL, {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false});
 mongoose.set('useCreateIndex', true)
 
 const itemSchema = new mongoose.Schema({
@@ -252,6 +252,7 @@ let port = process.env.PORT;
 if (port == null || port == "") {
   port = 3000;
 }
+
 app.listen(port, function(){
   console.log("Server start");
 });
