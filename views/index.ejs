@@ -1,46 +1,51 @@
 <%- include ('partials/header.ejs') %>
 
-  <body>
-    <div class="container-fluid clearfix">
-      <div class="new-list-form">
-        <form action="/" method="post">
-          <input type="text" name="newList" placeholder="new list" />
-          <button type="submit" name="button" value="list" class="add-button">+</button>
-        </form>
-      </div>
-
-      <% lists.forEach(function(list){ %>
-
-        <div class="box">
-          
-          <div class="head-box">
-            <form action="/deleteList" method="post">
-              <button class="delete-button" type="submit" name="buttonDelete" value="<%= list._id %>"><i class="fas fa-trash"></i></button>
-            </form>
-            <h1><%= list.listName %></h1>
-          </div>
-          <ul>
-
-            <% for (let j = 0; j < list.items.length; j++) { %>
-            <li class="item">
-              <form action="/deleteItem" method="POST">
-                <input id="item-delete" type="checkbox" onChange="this.form.submit()" name="<%= list._id %>" value="<%= list.items[j]._id %>">
-                <label for="item-delete"><%= list.items[j].content %></label>
-              </form>
-            </li>
-            <% } %>
-
-          
-            <form class="add-item-form" action="/" method="post">
-              <input type="text" name="newItem" placeholder="new item" />
-              <button type="submit" name="button" value="<%= list._id %>" class="add-button">+</button>
-            </form>
-
-
-          </ul>
-        </div>
-      <% }) %>
+<body>
+  <div class="container-fluid clearfix">
+    <form action="/logout" method="GET">
+      <button class=" btn top-left-corner" type="submit">logout</button>
+    </form>
+    <div class="new-list-form">
+      <form action="/" method="post">
+        <input type="text" name="newList" placeholder="new list" />
+        <button type="submit" name="button" value="list" class="btn add-button">+</button>
+      </form>
     </div>
-  </body>
+
+    <% lists.forEach(function(list){ %>
+
+    <div class="box">
+
+      <div class="head-box">
+        <form action="/deleteList" method="post">
+          <button class="delete-button" type="submit" name="buttonDelete" value="<%= list._id %>"><i
+              class="fas fa-trash"></i></button>
+        </form>
+        <h1><%= list.listName %></h1>
+      </div>
+      <ul>
+
+        <% for (let j = 0; j < list.items.length; j++) { %>
+        <li class="item">
+          <form action="/deleteItem" method="POST">
+            <input id="item-delete" type="checkbox" onChange="this.form.submit()" name="<%= list._id %>"
+              value="<%= list.items[j]._id %>">
+            <label for="item-delete"><%= list.items[j].content %></label>
+          </form>
+        </li>
+        <% } %>
+
+
+        <form class="add-item-form" action="/" method="post">
+          <input type="text" name="newItem" placeholder="new item" />
+          <button type="submit" name="button" value="<%= list._id %>" class=" btn add-button">+</button>
+        </form>
+
+
+      </ul>
+    </div>
+    <% }) %>
+  </div>
+</body>
 
 <%- include ('partials/footer.ejs') %>

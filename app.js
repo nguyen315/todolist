@@ -5,6 +5,8 @@ const session = require("express-session");
 const passport = require("passport");
 const passportLocalMongoose = require("passport-local-mongoose");
 
+require('dotenv').config();
+
 const app = new express();
 
 // SET UP
@@ -14,7 +16,7 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(express.static('public'));
 app.use(session({
-  secret: "secret message to sign in user",
+  secret: process.env.secret,
   resave: false,
   saveUninitialized: false
 
@@ -73,8 +75,6 @@ passport.deserializeUser(function(id, done) {
 
 
 
-
-
 // GET 
 app.get("/", function(req, res) {
   res.render("home");
@@ -99,12 +99,14 @@ app.get("/index", function(req, res) {
   }
 });
 
-
+app.get('/logout', function(req, res){
+  req.logout();
+  res.redirect('/');
+});
 
 // POST
 
 app.post("/register", function(req, res) {
-  
   User.register({username: req.body.username}, req.body.password, function(err, user){
     if (err) {
       console.log(err);
@@ -112,7 +114,7 @@ app.post("/register", function(req, res) {
     }
     else {
       console.log("register success");
-      passport.authenticate("local"),(req, res, function() {
+      passport.authenticate("local")(req, res, function() {
         res.redirect("/index");
       });
     }

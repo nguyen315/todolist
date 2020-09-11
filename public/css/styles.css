@@ -11,10 +11,6 @@ body {
   background-image: url("https://www.transparenttextures.com/patterns/cubes.png");
 }
 
-button:hover {
-  background-color: black;
-  color: white;
-}
 
 
 footer {
@@ -82,15 +78,23 @@ ul {
   padding-left: 20px;
   padding-right: 20px;
 }
+.btn {
+  background-color: #5eaaa8;
+  color: white;
+  font-family: 'Ubuntu', sans-serif;
+  font-weight: 400;
+  font-size: 30px;
+  margin: 10px;
+  padding: 0;
+  text-align: center;
+  text-transform: uppercase;
+  width: 170px;
+}
 
 .add-button {
   width: 50px;
   border-radius: 50%;
   border-color: transparent;
-  background-color: #5eaaa8;
-  color: #fff;
-  font-size: 30px;
-  padding-bottom: 6px;
   border-width: 0;
 }
 
@@ -112,7 +116,7 @@ ul {
   margin: 20px 20px 30px;
   overflow-wrap: break-word;
   vertical-align: top;
-  width: 350px;
+  width: 370px;
 }
 
 .clearfix:after {
@@ -234,18 +238,6 @@ input.login-input:focus {
   padding-bottom: 40px;
 }
 
-.home-page-btn {
-  background-color: #5eaaa8;
-  color: white;
-  font-family: 'Ubuntu', sans-serif;
-  font-weight: 400;
-  font-size: 30px;
-  margin: 10px;
-  text-align: center;
-  text-transform: uppercase;
-  width: 170px;
-}
-
 .wrap-login-input {
   padding: 25px 0;
   border: none;
@@ -272,6 +264,10 @@ input.login-input:focus {
   margin: 30px auto;
   text-transform: uppercase;
   width: 160px;
-  
-  
+}
+
+.top-left-corner {
+  position: absolute;
+  top: 0;
+  left: 0;
 }
