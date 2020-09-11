@@ -104,6 +104,7 @@ app.get("/index", function(req, res) {
 // POST
 
 app.post("/register", function(req, res) {
+  
   User.register({username: req.body.username}, req.body.password, function(err, user){
     if (err) {
       console.log(err);
@@ -111,7 +112,7 @@ app.post("/register", function(req, res) {
     }
     else {
       console.log("register success");
-      passport.authenticate("local")(req, res, function() {
+      passport.authenticate("local"),(req, res, function() {
         res.redirect("/index");
       });
     }

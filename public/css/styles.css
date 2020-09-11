@@ -122,10 +122,12 @@ ul {
 }
 
 .center-vertical-horizontal {
+  margin: 0;
   position: absolute;
-  top: 30%;
+  top: 40%;
   left: 50%;
-  transform: translateX(-50%);
+  -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
 }
 
 .delete-button {
@@ -216,6 +218,32 @@ input.login-input:focus {
   text-transform: uppercase;
   display: block;
   padding-bottom: 40px;
+}
+
+.home-page-title {
+  background-color: transparent;  
+  border: none;
+  color: white;
+  font-family: 'Ubuntu', sans-serif;
+  font-weight: 700;
+  font-size: 40px;
+  line-height: 1.2;
+  text-align: center;
+  text-transform: uppercase;
+  display: block;
+  padding-bottom: 40px;
+}
+
+.home-page-btn {
+  background-color: #5eaaa8;
+  color: white;
+  font-family: 'Ubuntu', sans-serif;
+  font-weight: 400;
+  font-size: 30px;
+  margin: 10px;
+  text-align: center;
+  text-transform: uppercase;
+  width: 170px;
 }
 
 .wrap-login-input {
