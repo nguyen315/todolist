@@ -248,9 +248,7 @@ app.post("/deleteItem", function(req, res) {
 
 
 // RUN
-//let port = process.env.PORT;
-
-let port = 3000;
+let port = process.env.PORT;
 if (port == null || port == "") {
   port = 3000;
 }
